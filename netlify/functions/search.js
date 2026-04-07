@@ -1,30 +1,22 @@
 const https = require("https");
 
-// Maps retailer keys to display names and source-matching aliases
 const RETAILER_CONFIG = {
-  nordstrom: {
-    name: "Nordstrom",
-    aliases: ["nordstrom"],
-  },
-  neiman: {
-    name: "Neiman Marcus",
-    aliases: ["neiman marcus", "neimanmarcus"],
-  },
-  saks: {
-    name: "Saks Fifth Avenue",
-    aliases: ["saks fifth avenue", "saks"],
-  },
-  bloomingdales: {
-    name: "Bloomingdale's",
-    aliases: ["bloomingdale's", "bloomingdales", "bloomingdale"],
-  },
+  nordstrom:      { name: "Nordstrom",          searchName: "Nordstrom" },
+  neiman:         { name: "Neiman Marcus",       searchName: "Neiman Marcus" },
+  saks:           { name: "Saks Fifth Avenue",   searchName: "Saks Fifth Avenue" },
+  bloomingdales:  { name: "Bloomingdale's",      searchName: "Bloomingdales" },
 };
 
-function matchesRetailer(source, selectedKeys) {
-  const s = (source || "").toLowerCase();
-  return selectedKeys.some((key) => {
-    const config = RETAILER_CONFIG[key];
-    return config && config.aliases.some((alias) => s.includes(alias));
+function serpFetch(url) {
+  return new Promise((resolve, reject) => {
+    https.get(url, (res) => {
+      let body = "";
+      res.on("data", (chunk) => (body += chunk));
+      res.on("end", () => {
+        try { resolve(JSON.parse(body)); }
+        catch (e) { reject(new Error("Invalid JSON from SerpAPI")); }
+      });
+    }).on("error", reject);
   });
 }
 
@@ -39,7 +31,7 @@ exports.handler = async function (event) {
     return { statusCode: 204, headers: CORS, body: "" };
   }
 
-  const { q, retailers, min_price, max_price, num = "60" } = event.queryStringParameters || {};
+  const { q, retailers, min_price, max_price, num = "20" } = event.queryStringParameters || {};
 
   if (!q) {
     return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: "Missing query" }) };
@@ -50,9 +42,11 @@ exports.handler = async function (event) {
     return { statusCode: 500, headers: CORS, body: JSON.stringify({ error: "API key not configured" }) };
   }
 
-  const selectedKeys = retailers ? retailers.split(",").map((r) => r.trim()).filter(Boolean) : [];
+  const selectedKeys = retailers
+    ? retailers.split(",").map((r) => r.trim()).filter((r) => RETAILER_CONFIG[r])
+    : Object.keys(RETAILER_CONFIG);
 
-  // Build price filter (Google Shopping tbs param)
+  // Price filter
   let tbs = "";
   if (min_price || max_price) {
     const min = min_price || "0";
@@ -60,43 +54,46 @@ exports.handler = async function (event) {
     tbs = `&tbs=mr:1,price:1,ppr_min:${min}${max ? `,ppr_max:${max}` : ""}`;
   }
 
-  // Search broadly — filter by retailer on the backend after results come in
-  const url = `https://serpapi.com/search.json?engine=google_shopping&q=${encodeURIComponent(q)}&num=${num}&api_key=${apiKey}${tbs}`;
+  // Run one search per selected retailer in parallel
+  const searches = selectedKeys.map((key) => {
+    const retailer = RETAILER_CONFIG[key];
+    const query = `${q} ${retailer.searchName}`;
+    const url = `https://serpapi.com/search.json?engine=google_shopping&q=${encodeURIComponent(query)}&num=${num}&api_key=${apiKey}${tbs}`;
+    return serpFetch(url)
+      .then((data) =>
+        (data.shopping_results || []).map((item) => ({
+          title: item.title || "",
+          price: item.price || "",
+          extracted_price: item.extracted_price || null,
+          old_price: item.old_price || null,
+          source: retailer.name,
+          retailer_key: key,
+          thumbnail: item.thumbnail || "",
+          link: item.product_link || item.link || "",
+          rating: item.rating || null,
+          reviews: item.reviews || null,
+          snippet: item.snippet || "",
+        }))
+      )
+      .catch(() => []); // if one retailer fails, don't block the others
+  });
 
   try {
-    const data = await new Promise((resolve, reject) => {
-      https.get(url, (res) => {
-        let body = "";
-        res.on("data", (chunk) => (body += chunk));
-        res.on("end", () => {
-          try { resolve(JSON.parse(body)); }
-          catch (e) { reject(new Error("Invalid JSON from SerpAPI")); }
-        });
-      }).on("error", reject);
-    });
+    const perRetailerResults = await Promise.all(searches);
 
-    let results = (data.shopping_results || []).map((item) => ({
-      title: item.title || "",
-      price: item.price || "",
-      extracted_price: item.extracted_price || null,
-      old_price: item.old_price || null,
-      source: item.source || "",
-      thumbnail: item.thumbnail || "",
-      link: item.product_link || item.link || "",
-      rating: item.rating || null,
-      reviews: item.reviews || null,
-      snippet: item.snippet || "",
-    }));
-
-    // Filter to selected retailers if any were specified
-    if (selectedKeys.length > 0) {
-      results = results.filter((item) => matchesRetailer(item.source, selectedKeys));
+    // Interleave results so cards from all retailers are mixed together
+    const interleaved = [];
+    const maxLen = Math.max(...perRetailerResults.map((r) => r.length));
+    for (let i = 0; i < maxLen; i++) {
+      for (const retailerResults of perRetailerResults) {
+        if (retailerResults[i]) interleaved.push(retailerResults[i]);
+      }
     }
 
     return {
       statusCode: 200,
       headers: CORS,
-      body: JSON.stringify({ results, total: results.length }),
+      body: JSON.stringify({ results: interleaved, total: interleaved.length }),
     };
   } catch (err) {
     return {
