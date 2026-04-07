@@ -3,110 +3,144 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Shop Search</title>
+  <title>DN Shops For Shoes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
 
+  <!-- Top Banner -->
+  <div class="top-banner">FREE SHIPPING ON ORDERS OVER $50 · RETURNS ACCEPTED WITHIN 30 DAYS</div>
+
+  <!-- Header -->
   <header>
-    <div class="logo">ShopSearch</div>
-    <p class="tagline">Search all your favorite stores at once</p>
+    <div class="header-inner">
+      <div class="logo">
+        <span class="logo-dn">DN</span>
+        <span class="logo-text">SHOPS FOR SHOES</span>
+      </div>
+      <div class="header-search">
+        <input type="text" id="query" placeholder="Search products, brands, styles..." autocomplete="off" />
+        <button id="search-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          SEARCH
+        </button>
+      </div>
+    </div>
   </header>
 
-  <main>
-    <!-- Search Bar -->
-    <section class="search-bar">
-      <input type="text" id="query" placeholder="e.g. white leather sneakers size 8" autocomplete="off" />
-      <button id="search-btn">Search</button>
-    </section>
+  <!-- Nav bar -->
+  <nav class="category-nav">
+    <button class="nav-pill active" data-cat="">ALL</button>
+    <button class="nav-pill" data-cat="shoes">SHOES</button>
+    <button class="nav-pill" data-cat="sneakers">SNEAKERS</button>
+    <button class="nav-pill" data-cat="boots">BOOTS</button>
+    <button class="nav-pill" data-cat="heels">HEELS</button>
+    <button class="nav-pill" data-cat="sandals">SANDALS</button>
+    <button class="nav-pill" data-cat="clothing">CLOTHING</button>
+    <button class="nav-pill" data-cat="bags">BAGS</button>
+    <button class="nav-pill" data-cat="accessories">ACCESSORIES</button>
+  </nav>
 
-    <!-- Filters -->
-    <section class="filters">
-      <div class="filter-group">
-        <label class="filter-label">Stores</label>
-        <div class="checkbox-group">
-          <label><input type="checkbox" name="retailer" value="nordstrom" checked /> Nordstrom</label>
-          <label><input type="checkbox" name="retailer" value="neiman" checked /> Neiman Marcus</label>
-          <label><input type="checkbox" name="retailer" value="saks" /> Saks Fifth Avenue</label>
-          <label><input type="checkbox" name="retailer" value="bloomingdales" /> Bloomingdale's</label>
+  <div class="page-body">
+
+    <!-- Sidebar Filters -->
+    <aside class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-title" data-toggle="stores">STORES <span class="arrow">&#8964;</span></div>
+        <div class="sidebar-content" id="stores-content">
+          <label class="filter-check"><input type="checkbox" name="retailer" value="nordstrom" checked /><span class="checkmark"></span>Nordstrom</label>
+          <label class="filter-check"><input type="checkbox" name="retailer" value="neiman" checked /><span class="checkmark"></span>Neiman Marcus</label>
+          <label class="filter-check"><input type="checkbox" name="retailer" value="saks" checked /><span class="checkmark"></span>Saks Fifth Avenue</label>
+          <label class="filter-check"><input type="checkbox" name="retailer" value="bloomingdales" checked /><span class="checkmark"></span>Bloomingdale's</label>
         </div>
       </div>
 
-      <div class="filter-group">
-        <label class="filter-label" for="category">Category</label>
-        <select id="category">
-          <option value="">All</option>
-          <option value="shoes">Shoes</option>
-          <option value="sneakers">Sneakers</option>
-          <option value="boots">Boots</option>
-          <option value="heels">Heels</option>
-          <option value="sandals">Sandals</option>
-          <option value="clothing">Clothing</option>
-          <option value="dresses">Dresses</option>
-          <option value="bags">Bags &amp; Handbags</option>
-          <option value="accessories">Accessories</option>
-        </select>
-      </div>
-
-      <div class="filter-group">
-        <label class="filter-label" for="size">Size</label>
-        <input type="text" id="size" placeholder="e.g. 8, M, 32" />
-      </div>
-
-      <div class="filter-group">
-        <label class="filter-label">Price Range</label>
-        <div class="price-range">
-          <input type="number" id="min-price" placeholder="Min $" min="0" />
-          <span>–</span>
-          <input type="number" id="max-price" placeholder="Max $" min="0" />
+      <div class="sidebar-section">
+        <div class="sidebar-title" data-toggle="price">PRICE <span class="arrow">&#8964;</span></div>
+        <div class="sidebar-content" id="price-content">
+          <div class="price-inputs">
+            <input type="number" id="min-price" placeholder="$ Min" min="0" />
+            <span class="price-dash">—</span>
+            <input type="number" id="max-price" placeholder="$ Max" min="0" />
+          </div>
         </div>
       </div>
 
-      <div class="filter-group">
-        <label class="filter-label" for="color">Color</label>
-        <input type="text" id="color" placeholder="e.g. black, white, nude" />
+      <div class="sidebar-section">
+        <div class="sidebar-title" data-toggle="size">SIZE <span class="arrow">&#8964;</span></div>
+        <div class="sidebar-content" id="size-content">
+          <input type="text" id="size" class="sidebar-input" placeholder="e.g. 8, M, 10.5" />
+        </div>
       </div>
 
-      <div class="filter-group">
-        <label class="filter-label" for="sort">Sort By</label>
-        <select id="sort">
-          <option value="relevance">Relevance</option>
-          <option value="price-asc">Price: Low to High</option>
-          <option value="price-desc">Price: High to Low</option>
-          <option value="sale">On Sale First</option>
-        </select>
+      <div class="sidebar-section">
+        <div class="sidebar-title" data-toggle="color">COLOR <span class="arrow">&#8964;</span></div>
+        <div class="sidebar-content" id="color-content">
+          <div class="color-swatches">
+            <button class="swatch" data-color="black" style="background:#1a1a1a" title="Black"></button>
+            <button class="swatch" data-color="white" style="background:#fff;border:1px solid #ddd" title="White"></button>
+            <button class="swatch" data-color="nude" style="background:#d4a98a" title="Nude"></button>
+            <button class="swatch" data-color="red" style="background:#c0392b" title="Red"></button>
+            <button class="swatch" data-color="pink" style="background:#e91e8c" title="Pink"></button>
+            <button class="swatch" data-color="blue" style="background:#2980b9" title="Blue"></button>
+            <button class="swatch" data-color="brown" style="background:#6d4c41" title="Brown"></button>
+            <button class="swatch" data-color="silver" style="background:#bdc3c7" title="Silver"></button>
+            <button class="swatch" data-color="gold" style="background:#f0c040" title="Gold"></button>
+          </div>
+          <input type="text" id="color" class="sidebar-input" placeholder="Or type a color..." style="margin-top:10px" />
+        </div>
       </div>
-    </section>
 
-    <!-- Results Header -->
-    <section class="results-header" id="results-header" style="display:none;">
-      <span id="results-count"></span>
-      <div class="retailer-legend">
-        <span class="badge nordstrom">Nordstrom</span>
-        <span class="badge neiman">Neiman Marcus</span>
-        <span class="badge saks">Saks</span>
-        <span class="badge bloomingdales">Bloomingdale's</span>
+      <div class="sidebar-section">
+        <div class="sidebar-title" data-toggle="sort">SORT BY <span class="arrow">&#8964;</span></div>
+        <div class="sidebar-content" id="sort-content">
+          <label class="filter-radio"><input type="radio" name="sort" value="relevance" checked /><span class="radiomark"></span>Best Match</label>
+          <label class="filter-radio"><input type="radio" name="sort" value="price-asc" /><span class="radiomark"></span>Price: Low to High</label>
+          <label class="filter-radio"><input type="radio" name="sort" value="price-desc" /><span class="radiomark"></span>Price: High to Low</label>
+          <label class="filter-radio"><input type="radio" name="sort" value="sale" /><span class="radiomark"></span>Sale Items First</label>
+        </div>
       </div>
-    </section>
 
-    <!-- Loading -->
-    <div id="loading" style="display:none;">
-      <div class="spinner"></div>
-      <p>Searching stores...</p>
-    </div>
+      <button class="apply-filters-btn" id="apply-btn">APPLY FILTERS</button>
+    </aside>
 
-    <!-- Error -->
-    <div id="error-msg" style="display:none;"></div>
+    <!-- Main Content -->
+    <main class="main-content">
 
-    <!-- Results Grid -->
-    <section class="results-grid" id="results-grid"></section>
+      <!-- Results bar -->
+      <div class="results-bar" id="results-bar" style="display:none">
+        <span id="results-count"></span>
+        <div class="store-tags" id="store-tags"></div>
+      </div>
 
-    <!-- Empty State -->
-    <div class="empty-state" id="empty-state">
-      <div class="empty-icon">🛍️</div>
-      <p>Search across Nordstrom, Neiman Marcus, Saks, and Bloomingdale's — all at once.</p>
-    </div>
-  </main>
+      <!-- Loading -->
+      <div id="loading" style="display:none">
+        <div class="loading-inner">
+          <div class="seph-spinner"></div>
+          <p>Finding the best picks for you...</p>
+        </div>
+      </div>
+
+      <!-- Error -->
+      <div id="error-msg" style="display:none"></div>
+
+      <!-- Grid -->
+      <div class="products-grid" id="results-grid"></div>
+
+      <!-- Empty State -->
+      <div class="empty-state" id="empty-state">
+        <div class="empty-icon">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+        </div>
+        <h2>Discover your next favorite</h2>
+        <p>Search for shoes, clothing, bags, and accessories across Nordstrom, Neiman Marcus, Saks, and Bloomingdale's — all in one place.</p>
+      </div>
+
+    </main>
+  </div>
 
   <script src="app.js"></script>
 </body>
