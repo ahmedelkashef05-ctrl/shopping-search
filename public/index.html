@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shop Search</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <header>
+    <div class="logo">ShopSearch</div>
+    <p class="tagline">Search all your favorite stores at once</p>
+  </header>
+
+  <main>
+    <!-- Search Bar -->
+    <section class="search-bar">
+      <input type="text" id="query" placeholder="e.g. white leather sneakers size 8" autocomplete="off" />
+      <button id="search-btn">Search</button>
+    </section>
+
+    <!-- Filters -->
+    <section class="filters">
+      <div class="filter-group">
+        <label class="filter-label">Stores</label>
+        <div class="checkbox-group">
+          <label><input type="checkbox" name="retailer" value="nordstrom" checked /> Nordstrom</label>
+          <label><input type="checkbox" name="retailer" value="neiman" checked /> Neiman Marcus</label>
+          <label><input type="checkbox" name="retailer" value="saks" /> Saks Fifth Avenue</label>
+          <label><input type="checkbox" name="retailer" value="bloomingdales" /> Bloomingdale's</label>
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <label class="filter-label" for="category">Category</label>
+        <select id="category">
+          <option value="">All</option>
+          <option value="shoes">Shoes</option>
+          <option value="sneakers">Sneakers</option>
+          <option value="boots">Boots</option>
+          <option value="heels">Heels</option>
+          <option value="sandals">Sandals</option>
+          <option value="clothing">Clothing</option>
+          <option value="dresses">Dresses</option>
+          <option value="bags">Bags &amp; Handbags</option>
+          <option value="accessories">Accessories</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label class="filter-label" for="size">Size</label>
+        <input type="text" id="size" placeholder="e.g. 8, M, 32" />
+      </div>
+
+      <div class="filter-group">
+        <label class="filter-label">Price Range</label>
+        <div class="price-range">
+          <input type="number" id="min-price" placeholder="Min $" min="0" />
+          <span>–</span>
+          <input type="number" id="max-price" placeholder="Max $" min="0" />
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <label class="filter-label" for="color">Color</label>
+        <input type="text" id="color" placeholder="e.g. black, white, nude" />
+      </div>
+
+      <div class="filter-group">
+        <label class="filter-label" for="sort">Sort By</label>
+        <select id="sort">
+          <option value="relevance">Relevance</option>
+          <option value="price-asc">Price: Low to High</option>
+          <option value="price-desc">Price: High to Low</option>
+          <option value="sale">On Sale First</option>
+        </select>
+      </div>
+    </section>
+
+    <!-- Results Header -->
+    <section class="results-header" id="results-header" style="display:none;">
+      <span id="results-count"></span>
+      <div class="retailer-legend">
+        <span class="badge nordstrom">Nordstrom</span>
+        <span class="badge neiman">Neiman Marcus</span>
+        <span class="badge saks">Saks</span>
+        <span class="badge bloomingdales">Bloomingdale's</span>
+      </div>
+    </section>
+
+    <!-- Loading -->
+    <div id="loading" style="display:none;">
+      <div class="spinner"></div>
+      <p>Searching stores...</p>
+    </div>
+
+    <!-- Error -->
+    <div id="error-msg" style="display:none;"></div>
+
+    <!-- Results Grid -->
+    <section class="results-grid" id="results-grid"></section>
+
+    <!-- Empty State -->
+    <div class="empty-state" id="empty-state">
+      <div class="empty-icon">🛍️</div>
+      <p>Search across Nordstrom, Neiman Marcus, Saks, and Bloomingdale's — all at once.</p>
+    </div>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
