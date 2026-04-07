@@ -91,11 +91,12 @@ a { text-decoration: none; color: inherit; }
 }
 .logo-script {
   font-family: var(--serif);
-  font-size: 2rem;
+  font-size: 1.4rem;
   font-weight: 300;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.05em;
   color: var(--black);
   font-style: italic;
+  white-space: nowrap;
 }
 .logo-sub {
   font-size: 0.52rem;
