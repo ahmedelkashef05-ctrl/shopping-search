@@ -1,51 +1,171 @@
 // ── State ──
-let allResults = [];
+let allResults  = [];
+let selectedSize  = "";
 let selectedColor = "";
 
-// ── Retailer key from source string ──
-const RETAILER_ALIASES = {
-  nordstrom:      ["nordstrom"],
-  neiman:         ["neiman marcus", "neimanmarcus"],
-  saks:           ["saks fifth avenue", "saks"],
-  bloomingdales:  ["bloomingdale's", "bloomingdales", "bloomingdale"],
-};
-const RETAILER_LABELS = {
-  nordstrom: "Nordstrom", neiman: "Neiman Marcus",
-  saks: "Saks Fifth Avenue", bloomingdales: "Bloomingdale's",
+// ── Retailer config ──
+const RETAILER = {
+  nordstrom:     { label: "Nordstrom",         aliases: ["nordstrom"] },
+  neiman:        { label: "Neiman Marcus",      aliases: ["neiman marcus", "neimanmarcus"] },
+  saks:          { label: "Saks Fifth Avenue",  aliases: ["saks fifth avenue", "saks"] },
+  bloomingdales: { label: "Bloomingdale's",     aliases: ["bloomingdale's", "bloomingdales", "bloomingdale"] },
 };
 
 function getRetailerKey(source) {
   const s = (source || "").toLowerCase();
-  for (const [key, aliases] of Object.entries(RETAILER_ALIASES)) {
-    if (aliases.some((a) => s.includes(a))) return key;
+  for (const [k, v] of Object.entries(RETAILER)) {
+    if (v.aliases.some((a) => s.includes(a))) return k;
   }
   return "other";
 }
 
-// ── Build query ──
+// ── Hero → App transition ──
+document.getElementById("hero-cta").addEventListener("click", () => {
+  document.getElementById("hero").style.display = "none";
+  document.getElementById("app-shell").classList.add("visible");
+  document.getElementById("search-toggle").click();
+});
+
+// ── Header scroll effect ──
+window.addEventListener("scroll", () => {
+  document.getElementById("site-header").classList.toggle("scrolled", window.scrollY > 20);
+});
+
+// ── Search drawer ──
+const drawer = document.getElementById("search-drawer");
+document.getElementById("search-toggle").addEventListener("click", () => {
+  drawer.classList.toggle("open");
+  if (drawer.classList.contains("open")) setTimeout(() => document.getElementById("query").focus(), 100);
+});
+document.getElementById("close-search").addEventListener("click", () => drawer.classList.remove("open"));
+
+// ── Nav buttons (header) ──
+document.querySelectorAll(".nav-btn").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".nav-btn").forEach((b) => b.classList.remove("active"));
+    btn.classList.add("active");
+    syncCategoryPill(btn.dataset.cat);
+    document.getElementById("hero").style.display = "none";
+    document.getElementById("app-shell").classList.add("visible");
+  });
+});
+
+// ── Category pills (strip) ──
+document.querySelectorAll(".cat-pill").forEach((pill) => {
+  pill.addEventListener("click", () => {
+    document.querySelectorAll(".cat-pill").forEach((p) => p.classList.remove("active"));
+    pill.classList.add("active");
+  });
+});
+
+function syncCategoryPill(cat) {
+  document.querySelectorAll(".cat-pill").forEach((p) => {
+    p.classList.toggle("active", p.dataset.cat === cat);
+  });
+}
+
+// ── Mobile sidebar toggle ──
+document.getElementById("filter-toggle").addEventListener("click", () => {
+  document.getElementById("sidebar").classList.toggle("open");
+});
+
+// ── Filter block accordion ──
+document.querySelectorAll(".filter-block-title").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const body = document.getElementById(btn.dataset.target);
+    if (!body) return;
+    body.classList.toggle("hidden");
+    btn.classList.toggle("collapsed");
+  });
+});
+
+// ── Size buttons ──
+document.querySelectorAll(".size-btn").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const already = btn.classList.contains("active");
+    document.querySelectorAll(".size-btn").forEach((b) => b.classList.remove("active"));
+    if (!already) {
+      btn.classList.add("active");
+      selectedSize = btn.dataset.size;
+      document.getElementById("size").value = selectedSize;
+    } else {
+      selectedSize = "";
+      document.getElementById("size").value = "";
+    }
+  });
+});
+document.getElementById("size").addEventListener("input", (e) => {
+  selectedSize = e.target.value.trim();
+  document.querySelectorAll(".size-btn").forEach((b) => {
+    b.classList.toggle("active", b.dataset.size === selectedSize);
+  });
+});
+
+// ── Color dots ──
+document.querySelectorAll(".color-dot").forEach((dot) => {
+  dot.addEventListener("click", () => {
+    const already = dot.classList.contains("active");
+    document.querySelectorAll(".color-dot").forEach((d) => d.classList.remove("active"));
+    if (!already) {
+      dot.classList.add("active");
+      selectedColor = dot.dataset.color;
+      document.getElementById("color").value = selectedColor;
+    } else {
+      selectedColor = "";
+      document.getElementById("color").value = "";
+    }
+  });
+});
+document.getElementById("color").addEventListener("input", (e) => {
+  selectedColor = e.target.value.trim();
+  document.querySelectorAll(".color-dot").forEach((d) => d.classList.remove("active"));
+});
+
+// ── Quick price buttons ──
+document.querySelectorAll(".qp-btn").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".qp-btn").forEach((b) => b.classList.remove("active"));
+    btn.classList.add("active");
+    document.getElementById("min-price").value = btn.dataset.min || "";
+    document.getElementById("max-price").value = btn.dataset.max || "";
+  });
+});
+
+// ── Clear all ──
+document.getElementById("clear-all").addEventListener("click", () => {
+  document.querySelectorAll('input[name="retailer"]').forEach((cb) => (cb.checked = true));
+  document.getElementById("min-price").value = "";
+  document.getElementById("max-price").value = "";
+  document.getElementById("size").value = "";
+  document.getElementById("color").value = "";
+  selectedSize = ""; selectedColor = "";
+  document.querySelectorAll(".size-btn, .color-dot, .qp-btn").forEach((b) => b.classList.remove("active"));
+  document.querySelectorAll('input[name="sort"]')[0].checked = true;
+});
+
+// ── Build search query ──
 function buildQuery() {
-  const keyword = document.getElementById("query").value.trim();
-  const size    = document.getElementById("size").value.trim();
-  const color   = document.getElementById("color").value.trim() || selectedColor;
-  const catEl   = document.querySelector(".nav-pill.active");
-  const category = catEl ? catEl.dataset.cat : "";
+  const keyword  = document.getElementById("query").value.trim();
+  const activePill = document.querySelector(".cat-pill.active");
+  const category = activePill ? activePill.dataset.cat : "";
+  const color    = document.getElementById("color").value.trim() || selectedColor;
+  const size     = document.getElementById("size").value.trim() || selectedSize;
 
   const parts = [];
   if (category) parts.push(category);
   if (color)    parts.push(color);
   if (keyword)  parts.push(keyword);
   if (size)     parts.push(`size ${size}`);
-  return parts.join(" ") || "shoes";
+  return parts.join(" ") || "luxury fashion";
 }
 
 function getRetailers() {
-  return Array.from(document.querySelectorAll('input[name="retailer"]:checked'))
+  return [...document.querySelectorAll('input[name="retailer"]:checked')]
     .map((cb) => cb.value).join(",");
 }
 
 function getSort() {
-  const r = document.querySelector('input[name="sort"]:checked');
-  return r ? r.value : "relevance";
+  return document.querySelector('input[name="sort"]:checked')?.value || "relevance";
 }
 
 // ── Fetch ──
@@ -56,16 +176,20 @@ async function fetchResults() {
 
   const minPrice = document.getElementById("min-price").value;
   const maxPrice = document.getElementById("max-price").value;
+  const size     = document.getElementById("size").value.trim() || selectedSize;
 
-  const size = document.getElementById("size").value.trim();
   const params = new URLSearchParams({ q: query, retailers, num: "20" });
   if (minPrice) params.set("min_price", minPrice);
   if (maxPrice) params.set("max_price", maxPrice);
-  if (size) params.set("size", size);
+  if (size)     params.set("size", size);
 
-  setLoading(true);
-  clearError();
-  hideEmpty();
+  // Show app shell if hidden
+  document.getElementById("hero").style.display = "none";
+  document.getElementById("app-shell").classList.add("visible");
+  document.getElementById("sidebar").classList.remove("open");
+  drawer.classList.remove("open");
+
+  setLoading(true); clearError(); hideEmpty();
 
   try {
     const res  = await fetch(`/.netlify/functions/search?${params}`);
@@ -74,9 +198,8 @@ async function fetchResults() {
     allResults = data.results || [];
     renderResults();
   } catch (err) {
-    showError(`Search error: ${err.message}`);
+    showError(`Could not complete search: ${err.message}`);
     allResults = [];
-    renderResults();
   } finally {
     setLoading(false);
   }
@@ -94,70 +217,62 @@ function getSorted(results) {
 
 // ── Render ──
 function renderResults() {
-  const grid   = document.getElementById("results-grid");
-  const bar    = document.getElementById("results-bar");
-  const count  = document.getElementById("results-count");
-  const tags   = document.getElementById("store-tags");
+  const grid  = document.getElementById("results-grid");
+  const meta  = document.getElementById("results-meta");
+  const count = document.getElementById("results-count");
+  const storesEl = document.getElementById("active-stores");
 
   if (!allResults.length) {
-    grid.innerHTML = "";
-    bar.style.display = "none";
-    showEmpty();
-    return;
+    grid.innerHTML = ""; meta.style.display = "none";
+    showEmpty(); return;
   }
 
   const sorted = getSorted(allResults);
-  bar.style.display = "flex";
-  count.textContent = `${sorted.length} product${sorted.length !== 1 ? "s" : ""} found`;
+  meta.style.display = "flex";
+  count.textContent = `${sorted.length} results`;
 
-  // Build store tags from unique retailers in results
-  const keys = [...new Set(sorted.map((r) => getRetailerKey(r.source)).filter((k) => k !== "other"))];
-  tags.innerHTML = keys.map((k) =>
-    `<span class="store-tag ${k}">${esc(RETAILER_LABELS[k] || k)}</span>`
-  ).join("");
+  const keys = [...new Set(sorted.map((r) => r.retailer_key || getRetailerKey(r.source)).filter(Boolean))];
+  storesEl.innerHTML = Object.keys(RETAILER).map((k) => {
+    const on = keys.includes(k);
+    return `<span class="store-pill${on ? " active-store" : ""}">${esc(RETAILER[k].label)}</span>`;
+  }).join("");
+
+  const sizeVal = document.getElementById("size").value.trim() || selectedSize;
 
   grid.innerHTML = sorted.map((item) => {
-    const key    = getRetailerKey(item.source);
-    const label  = RETAILER_LABELS[key] || item.source;
+    const key    = item.retailer_key || getRetailerKey(item.source);
+    const label  = RETAILER[key]?.label || item.source;
     const isSale = !!item.old_price;
-    const stars  = item.rating
-      ? "★".repeat(Math.round(item.rating)) + "☆".repeat(5 - Math.round(item.rating))
-      : "";
-    // Try to extract brand from title (first word(s) before a space-dash pattern)
-    const brandMatch = item.title.match(/^([A-Z][A-Za-z&\s]{2,20}?)(?:\s[-–]|\s\d|\s[a-z])/);
-    const brand = brandMatch ? brandMatch[1].trim() : "";
-
-    const sizeVal = document.getElementById("size").value.trim();
-    const sizeTag = sizeVal && item.size_confirmed
-      ? `<span class="size-badge">SIZE ${esc(sizeVal)} AVAILABLE</span>`
-      : "";
+    const rating = item.rating ? Math.round(item.rating) : 0;
+    const stars  = rating ? "★".repeat(rating) + "☆".repeat(5 - rating) : "";
 
     return `
-      <div class="product-card">
-        <div class="card-img-wrap">
-          ${isSale ? '<span class="sale-ribbon">SALE</span>' : ""}
+      <article class="product-card" onclick="window.open('${esc(item.link)}','_blank')">
+        <div class="pc-img">
+          ${isSale ? '<span class="pc-badge-sale">SALE</span>' : ""}
           <img
             src="${esc(item.thumbnail)}"
             alt="${esc(item.title)}"
             loading="lazy"
-            onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22120%22 height=%22120%22%3E%3Crect width=%22120%22 height=%22120%22 fill=%22%23f0f0f0%22/%3E%3C/svg%3E'"
+            onerror="this.style.display='none'"
           />
-          <span class="card-store-badge ${key}">${esc(label)}</span>
-        </div>
-        <div class="card-body">
-          ${brand ? `<div class="card-brand">${esc(brand)}</div>` : ""}
-          <p class="card-title">${esc(item.title)}</p>
-          <div class="card-price-row">
-            <span class="price-now${isSale ? " is-sale" : ""}">${esc(item.price)}</span>
-            ${isSale ? `<span class="price-was">${esc(item.old_price)}</span>` : ""}
+          <span class="pc-store-badge ${key}">${esc(label)}</span>
+          <div class="pc-quick">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            VIEW AT ${esc(label.toUpperCase())}
           </div>
-          ${item.rating ? `<div class="card-rating"><span class="stars">${stars}</span> ${item.rating}${item.reviews ? ` (${item.reviews})` : ""}</div>` : ""}
-          ${sizeTag}
         </div>
-        <div class="card-footer">
-          <a class="shop-btn" href="${esc(item.link)}" target="_blank" rel="noopener">SHOP NOW →</a>
+        <div class="pc-body">
+          <div class="pc-store-name">${esc(label.toUpperCase())}</div>
+          <div class="pc-title">${esc(item.title)}</div>
+          <div class="pc-price-row">
+            <span class="pc-price${isSale ? " sale" : ""}">${esc(item.price)}</span>
+            ${isSale ? `<span class="pc-price-old">${esc(item.old_price)}</span>` : ""}
+          </div>
+          ${rating ? `<div class="pc-rating"><span class="stars">${stars}</span>${item.rating}${item.reviews ? ` (${Number(item.reviews).toLocaleString()})` : ""}</div>` : ""}
+          ${sizeVal && item.size_confirmed ? `<div class="pc-size-badge">SIZE ${esc(sizeVal)} AVAILABLE</div>` : ""}
         </div>
-      </div>
+      </article>
     `;
   }).join("");
 }
@@ -169,9 +284,9 @@ function esc(str) {
     .replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 }
 function setLoading(on) {
-  document.getElementById("loading").style.display = on ? "flex" : "none";
+  document.getElementById("loading").style.display = on ? "block" : "none";
   document.getElementById("search-btn").disabled = on;
-  if (on) { document.getElementById("results-grid").innerHTML = ""; document.getElementById("results-bar").style.display = "none"; }
+  if (on) { document.getElementById("results-grid").innerHTML = ""; document.getElementById("results-meta").style.display = "none"; }
 }
 function showError(msg) {
   const el = document.getElementById("error-msg");
@@ -183,41 +298,6 @@ function clearError() {
 }
 function showEmpty()  { document.getElementById("empty-state").style.display = "block"; }
 function hideEmpty()  { document.getElementById("empty-state").style.display = "none"; }
-
-// ── Category nav ──
-document.querySelectorAll(".nav-pill").forEach((btn) => {
-  btn.addEventListener("click", () => {
-    document.querySelectorAll(".nav-pill").forEach((b) => b.classList.remove("active"));
-    btn.classList.add("active");
-  });
-});
-
-// ── Color swatches ──
-document.querySelectorAll(".swatch").forEach((swatch) => {
-  swatch.addEventListener("click", () => {
-    document.querySelectorAll(".swatch").forEach((s) => s.classList.remove("selected"));
-    if (selectedColor === swatch.dataset.color) {
-      selectedColor = "";
-      document.getElementById("color").value = "";
-    } else {
-      swatch.classList.add("selected");
-      selectedColor = swatch.dataset.color;
-      document.getElementById("color").value = swatch.dataset.color;
-    }
-  });
-});
-
-// ── Sidebar toggles ──
-document.querySelectorAll(".sidebar-title").forEach((title) => {
-  title.addEventListener("click", () => {
-    const id = title.dataset.toggle;
-    const content = document.getElementById(`${id}-content`);
-    if (content) {
-      content.classList.toggle("hidden");
-      title.classList.toggle("collapsed");
-    }
-  });
-});
 
 // ── Search triggers ──
 document.getElementById("search-btn").addEventListener("click", fetchResults);

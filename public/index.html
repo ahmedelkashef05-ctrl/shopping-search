@@ -3,144 +3,250 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>DN Shops For Shoes</title>
+  <title>DN — Luxury Multi-Store Shopping</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
 
-  <!-- Top Banner -->
-  <div class="top-banner">FREE SHIPPING ON ORDERS OVER $50 · RETURNS ACCEPTED WITHIN 30 DAYS</div>
+  <!-- Announcement Bar -->
+  <div class="announcement-bar">
+    <span>Complimentary shipping on orders over $150</span>
+    <span class="dot">·</span>
+    <span>Shop Nordstrom · Neiman Marcus · Saks · Bloomingdale's simultaneously</span>
+  </div>
 
   <!-- Header -->
-  <header>
-    <div class="header-inner">
-      <div class="logo">
-        <span class="logo-dn">DN</span>
-        <span class="logo-text">SHOPS FOR SHOES</span>
+  <header id="site-header">
+    <div class="header-grid">
+      <nav class="header-nav left">
+        <button class="nav-btn" data-cat="">All</button>
+        <button class="nav-btn" data-cat="shoes">Shoes</button>
+        <button class="nav-btn" data-cat="clothing">Clothing</button>
+        <button class="nav-btn" data-cat="bags">Bags</button>
+        <button class="nav-btn" data-cat="accessories">Accessories</button>
+      </nav>
+
+      <div class="header-logo">
+        <span class="logo-script">DN</span>
+        <span class="logo-sub">CURATED SHOPPING</span>
       </div>
-      <div class="header-search">
-        <input type="text" id="query" placeholder="Search products, brands, styles..." autocomplete="off" />
-        <button id="search-btn">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          SEARCH
+
+      <div class="header-actions">
+        <button class="icon-btn" id="search-toggle" title="Search" aria-label="Open search">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         </button>
+        <button class="icon-btn filter-toggle-mobile" id="filter-toggle" title="Filters">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
+          <span>Filter</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Search Drawer -->
+    <div class="search-drawer" id="search-drawer">
+      <div class="search-drawer-inner">
+        <input type="text" id="query" placeholder="Search for styles, brands, products…" autocomplete="off" />
+        <button id="search-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </button>
+        <button class="close-search" id="close-search">✕</button>
       </div>
     </div>
   </header>
 
-  <!-- Nav bar -->
-  <nav class="category-nav">
-    <button class="nav-pill active" data-cat="">ALL</button>
-    <button class="nav-pill" data-cat="shoes">SHOES</button>
-    <button class="nav-pill" data-cat="sneakers">SNEAKERS</button>
-    <button class="nav-pill" data-cat="boots">BOOTS</button>
-    <button class="nav-pill" data-cat="heels">HEELS</button>
-    <button class="nav-pill" data-cat="sandals">SANDALS</button>
-    <button class="nav-pill" data-cat="clothing">CLOTHING</button>
-    <button class="nav-pill" data-cat="bags">BAGS</button>
-    <button class="nav-pill" data-cat="accessories">ACCESSORIES</button>
-  </nav>
+  <!-- Hero -->
+  <section class="hero" id="hero">
+    <div class="hero-content">
+      <p class="hero-eyebrow">Discover</p>
+      <h1 class="hero-headline">Shop Every<br/><em>Luxury Store</em><br/>At Once</h1>
+      <p class="hero-sub">Search across Nordstrom, Neiman Marcus, Saks &amp; Bloomingdale's — filtered, sorted, and beautifully presented.</p>
+      <button class="hero-cta" id="hero-cta">Start Shopping</button>
+    </div>
+  </section>
 
-  <div class="page-body">
+  <!-- Main App -->
+  <div class="app-shell" id="app-shell">
 
-    <!-- Sidebar Filters -->
-    <aside class="sidebar">
-      <div class="sidebar-section">
-        <div class="sidebar-title" data-toggle="stores">STORES <span class="arrow">&#8964;</span></div>
-        <div class="sidebar-content" id="stores-content">
-          <label class="filter-check"><input type="checkbox" name="retailer" value="nordstrom" checked /><span class="checkmark"></span>Nordstrom</label>
-          <label class="filter-check"><input type="checkbox" name="retailer" value="neiman" checked /><span class="checkmark"></span>Neiman Marcus</label>
-          <label class="filter-check"><input type="checkbox" name="retailer" value="saks" checked /><span class="checkmark"></span>Saks Fifth Avenue</label>
-          <label class="filter-check"><input type="checkbox" name="retailer" value="bloomingdales" checked /><span class="checkmark"></span>Bloomingdale's</label>
-        </div>
+    <!-- Category Pills (mobile + desktop sub-nav) -->
+    <div class="category-strip">
+      <div class="category-scroll">
+        <button class="cat-pill active" data-cat="">All</button>
+        <button class="cat-pill" data-cat="sneakers">Sneakers</button>
+        <button class="cat-pill" data-cat="heels">Heels</button>
+        <button class="cat-pill" data-cat="boots">Boots</button>
+        <button class="cat-pill" data-cat="sandals">Sandals</button>
+        <button class="cat-pill" data-cat="loafers">Loafers</button>
+        <button class="cat-pill" data-cat="dresses">Dresses</button>
+        <button class="cat-pill" data-cat="handbags">Handbags</button>
+        <button class="cat-pill" data-cat="jewelry">Jewelry</button>
+        <button class="cat-pill" data-cat="sunglasses">Sunglasses</button>
       </div>
+    </div>
 
-      <div class="sidebar-section">
-        <div class="sidebar-title" data-toggle="price">PRICE <span class="arrow">&#8964;</span></div>
-        <div class="sidebar-content" id="price-content">
-          <div class="price-inputs">
-            <input type="number" id="min-price" placeholder="$ Min" min="0" />
-            <span class="price-dash">—</span>
-            <input type="number" id="max-price" placeholder="$ Max" min="0" />
+    <div class="content-layout">
+
+      <!-- Sidebar -->
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+          <span>Refine</span>
+          <button class="clear-all-btn" id="clear-all">Clear All</button>
+        </div>
+
+        <!-- Stores -->
+        <div class="filter-block">
+          <button class="filter-block-title" data-target="stores-body">
+            Stores
+            <svg class="chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="filter-block-body" id="stores-body">
+            <label class="luxury-check"><input type="checkbox" name="retailer" value="nordstrom" checked /><span class="lc-box"></span>Nordstrom</label>
+            <label class="luxury-check"><input type="checkbox" name="retailer" value="neiman" checked /><span class="lc-box"></span>Neiman Marcus</label>
+            <label class="luxury-check"><input type="checkbox" name="retailer" value="saks" checked /><span class="lc-box"></span>Saks Fifth Avenue</label>
+            <label class="luxury-check"><input type="checkbox" name="retailer" value="bloomingdales" checked /><span class="lc-box"></span>Bloomingdale's</label>
           </div>
         </div>
-      </div>
 
-      <div class="sidebar-section">
-        <div class="sidebar-title" data-toggle="size">SIZE <span class="arrow">&#8964;</span></div>
-        <div class="sidebar-content" id="size-content">
-          <input type="text" id="size" class="sidebar-input" placeholder="e.g. 8, M, 10.5" />
-        </div>
-      </div>
-
-      <div class="sidebar-section">
-        <div class="sidebar-title" data-toggle="color">COLOR <span class="arrow">&#8964;</span></div>
-        <div class="sidebar-content" id="color-content">
-          <div class="color-swatches">
-            <button class="swatch" data-color="black" style="background:#1a1a1a" title="Black"></button>
-            <button class="swatch" data-color="white" style="background:#fff;border:1px solid #ddd" title="White"></button>
-            <button class="swatch" data-color="nude" style="background:#d4a98a" title="Nude"></button>
-            <button class="swatch" data-color="red" style="background:#c0392b" title="Red"></button>
-            <button class="swatch" data-color="pink" style="background:#e91e8c" title="Pink"></button>
-            <button class="swatch" data-color="blue" style="background:#2980b9" title="Blue"></button>
-            <button class="swatch" data-color="brown" style="background:#6d4c41" title="Brown"></button>
-            <button class="swatch" data-color="silver" style="background:#bdc3c7" title="Silver"></button>
-            <button class="swatch" data-color="gold" style="background:#f0c040" title="Gold"></button>
+        <!-- Price -->
+        <div class="filter-block">
+          <button class="filter-block-title" data-target="price-body">
+            Price
+            <svg class="chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="filter-block-body" id="price-body">
+            <div class="price-row">
+              <div class="price-field"><span>$</span><input type="number" id="min-price" placeholder="Min" min="0" /></div>
+              <span class="price-sep">—</span>
+              <div class="price-field"><span>$</span><input type="number" id="max-price" placeholder="Max" min="0" /></div>
+            </div>
+            <div class="quick-prices">
+              <button class="qp-btn" data-min="0" data-max="200">Under $200</button>
+              <button class="qp-btn" data-min="200" data-max="500">$200–$500</button>
+              <button class="qp-btn" data-min="500" data-max="1000">$500–$1K</button>
+              <button class="qp-btn" data-min="1000" data-max="">$1K+</button>
+            </div>
           </div>
-          <input type="text" id="color" class="sidebar-input" placeholder="Or type a color..." style="margin-top:10px" />
         </div>
-      </div>
 
-      <div class="sidebar-section">
-        <div class="sidebar-title" data-toggle="sort">SORT BY <span class="arrow">&#8964;</span></div>
-        <div class="sidebar-content" id="sort-content">
-          <label class="filter-radio"><input type="radio" name="sort" value="relevance" checked /><span class="radiomark"></span>Best Match</label>
-          <label class="filter-radio"><input type="radio" name="sort" value="price-asc" /><span class="radiomark"></span>Price: Low to High</label>
-          <label class="filter-radio"><input type="radio" name="sort" value="price-desc" /><span class="radiomark"></span>Price: High to Low</label>
-          <label class="filter-radio"><input type="radio" name="sort" value="sale" /><span class="radiomark"></span>Sale Items First</label>
+        <!-- Size -->
+        <div class="filter-block">
+          <button class="filter-block-title" data-target="size-body">
+            Size
+            <svg class="chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="filter-block-body" id="size-body">
+            <div class="size-grid">
+              <button class="size-btn" data-size="5">5</button>
+              <button class="size-btn" data-size="5.5">5.5</button>
+              <button class="size-btn" data-size="6">6</button>
+              <button class="size-btn" data-size="6.5">6.5</button>
+              <button class="size-btn" data-size="7">7</button>
+              <button class="size-btn" data-size="7.5">7.5</button>
+              <button class="size-btn" data-size="8">8</button>
+              <button class="size-btn" data-size="8.5">8.5</button>
+              <button class="size-btn" data-size="9">9</button>
+              <button class="size-btn" data-size="9.5">9.5</button>
+              <button class="size-btn" data-size="10">10</button>
+              <button class="size-btn" data-size="10.5">10.5</button>
+              <button class="size-btn" data-size="XS">XS</button>
+              <button class="size-btn" data-size="S">S</button>
+              <button class="size-btn" data-size="M">M</button>
+              <button class="size-btn" data-size="L">L</button>
+              <button class="size-btn" data-size="XL">XL</button>
+            </div>
+            <input type="text" id="size" class="size-input" placeholder="Or enter size…" />
+          </div>
         </div>
-      </div>
 
-      <button class="apply-filters-btn" id="apply-btn">APPLY FILTERS</button>
-    </aside>
-
-    <!-- Main Content -->
-    <main class="main-content">
-
-      <!-- Results bar -->
-      <div class="results-bar" id="results-bar" style="display:none">
-        <span id="results-count"></span>
-        <div class="store-tags" id="store-tags"></div>
-      </div>
-
-      <!-- Loading -->
-      <div id="loading" style="display:none">
-        <div class="loading-inner">
-          <div class="seph-spinner"></div>
-          <p>Finding the best picks for you...</p>
+        <!-- Color -->
+        <div class="filter-block">
+          <button class="filter-block-title" data-target="color-body">
+            Color
+            <svg class="chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="filter-block-body" id="color-body">
+            <div class="color-grid">
+              <button class="color-dot" data-color="black" style="background:#1a1a1a" title="Black"></button>
+              <button class="color-dot" data-color="white" style="background:#f5f5f5;border:1px solid #ddd" title="White"></button>
+              <button class="color-dot" data-color="beige" style="background:#d4b89a" title="Beige"></button>
+              <button class="color-dot" data-color="nude" style="background:#c8966e" title="Nude"></button>
+              <button class="color-dot" data-color="red" style="background:#b91c1c" title="Red"></button>
+              <button class="color-dot" data-color="pink" style="background:#ec4899" title="Pink"></button>
+              <button class="color-dot" data-color="blue" style="background:#1d4ed8" title="Blue"></button>
+              <button class="color-dot" data-color="green" style="background:#166534" title="Green"></button>
+              <button class="color-dot" data-color="brown" style="background:#78350f" title="Brown"></button>
+              <button class="color-dot" data-color="gold" style="background:#c8a96e" title="Gold"></button>
+              <button class="color-dot" data-color="silver" style="background:#9ca3af" title="Silver"></button>
+              <button class="color-dot" data-color="leopard" style="background:linear-gradient(135deg,#c8a96e 33%,#1a1a1a 33%,#1a1a1a 66%,#c8a96e 66%)" title="Leopard"></button>
+            </div>
+            <input type="text" id="color" class="size-input" placeholder="Or describe color…" />
+          </div>
         </div>
-      </div>
 
-      <!-- Error -->
-      <div id="error-msg" style="display:none"></div>
-
-      <!-- Grid -->
-      <div class="products-grid" id="results-grid"></div>
-
-      <!-- Empty State -->
-      <div class="empty-state" id="empty-state">
-        <div class="empty-icon">
-          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+        <!-- Sort -->
+        <div class="filter-block">
+          <button class="filter-block-title" data-target="sort-body">
+            Sort By
+            <svg class="chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="filter-block-body" id="sort-body">
+            <label class="luxury-radio"><input type="radio" name="sort" value="relevance" checked /><span class="lr-dot"></span>Best Match</label>
+            <label class="luxury-radio"><input type="radio" name="sort" value="price-asc" /><span class="lr-dot"></span>Price: Low to High</label>
+            <label class="luxury-radio"><input type="radio" name="sort" value="price-desc" /><span class="lr-dot"></span>Price: High to Low</label>
+            <label class="luxury-radio"><input type="radio" name="sort" value="sale" /><span class="lr-dot"></span>Sale Items First</label>
+          </div>
         </div>
-        <h2>Discover your next favorite</h2>
-        <p>Search for shoes, clothing, bags, and accessories across Nordstrom, Neiman Marcus, Saks, and Bloomingdale's — all in one place.</p>
-      </div>
 
-    </main>
+        <button class="apply-btn" id="apply-btn">Search</button>
+      </aside>
+
+      <!-- Results -->
+      <main class="results-area">
+        <div class="results-meta" id="results-meta" style="display:none">
+          <span id="results-count"></span>
+          <div class="active-stores" id="active-stores"></div>
+        </div>
+
+        <!-- Loading skeleton -->
+        <div id="loading" style="display:none">
+          <div class="skeleton-grid">
+            <div class="skeleton-card"><div class="sk-img"></div><div class="sk-line w60"></div><div class="sk-line w40"></div></div>
+            <div class="skeleton-card"><div class="sk-img"></div><div class="sk-line w70"></div><div class="sk-line w50"></div></div>
+            <div class="skeleton-card"><div class="sk-img"></div><div class="sk-line w55"></div><div class="sk-line w35"></div></div>
+            <div class="skeleton-card"><div class="sk-img"></div><div class="sk-line w65"></div><div class="sk-line w45"></div></div>
+            <div class="skeleton-card"><div class="sk-img"></div><div class="sk-line w60"></div><div class="sk-line w40"></div></div>
+            <div class="skeleton-card"><div class="sk-img"></div><div class="sk-line w75"></div><div class="sk-line w55"></div></div>
+          </div>
+        </div>
+
+        <div id="error-msg" style="display:none"></div>
+
+        <div class="product-grid" id="results-grid"></div>
+
+        <!-- Empty / intro -->
+        <div class="intro-state" id="empty-state">
+          <div class="intro-stores">
+            <div class="store-emblem nordstrom">N</div>
+            <div class="store-emblem neiman">NM</div>
+            <div class="store-emblem saks">S</div>
+            <div class="store-emblem bloom">B</div>
+          </div>
+          <h2 class="intro-headline">Four stores.<br/>One search.</h2>
+          <p class="intro-sub">Enter a style, brand, or item above and we'll surface the best picks across all four retailers simultaneously.</p>
+        </div>
+      </main>
+    </div>
   </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-inner">
+      <span class="footer-logo">DN Curated Shopping</span>
+      <span class="footer-note">Powered by Google Shopping · Results link directly to retailer sites</span>
+    </div>
+  </footer>
 
   <script src="app.js"></script>
 </body>
