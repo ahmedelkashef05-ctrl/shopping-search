@@ -133,7 +133,7 @@ exports.handler = async function (event) {
 
   const searches = selectedKeys.map((key) => {
     const retailer = RETAILER_CONFIG[key];
-    const query = `${q}${sizeQuery} ${retailer.searchName}`;
+    const query = `women's ${q}${sizeQuery} ${retailer.searchName}`;
     const url = `https://serpapi.com/search.json?engine=google_shopping&q=${encodeURIComponent(query)}&num=${num}&api_key=${apiKey}${tbs}`;
 
     return serpFetch(url)
