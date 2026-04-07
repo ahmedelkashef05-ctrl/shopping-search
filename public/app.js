@@ -57,9 +57,11 @@ async function fetchResults() {
   const minPrice = document.getElementById("min-price").value;
   const maxPrice = document.getElementById("max-price").value;
 
+  const size = document.getElementById("size").value.trim();
   const params = new URLSearchParams({ q: query, retailers, num: "20" });
   if (minPrice) params.set("min_price", minPrice);
   if (maxPrice) params.set("max_price", maxPrice);
+  if (size) params.set("size", size);
 
   setLoading(true);
   clearError();
@@ -125,6 +127,11 @@ function renderResults() {
     const brandMatch = item.title.match(/^([A-Z][A-Za-z&\s]{2,20}?)(?:\s[-–]|\s\d|\s[a-z])/);
     const brand = brandMatch ? brandMatch[1].trim() : "";
 
+    const sizeVal = document.getElementById("size").value.trim();
+    const sizeTag = sizeVal && item.size_confirmed
+      ? `<span class="size-badge">SIZE ${esc(sizeVal)} AVAILABLE</span>`
+      : "";
+
     return `
       <div class="product-card">
         <div class="card-img-wrap">
@@ -145,9 +152,10 @@ function renderResults() {
             ${isSale ? `<span class="price-was">${esc(item.old_price)}</span>` : ""}
           </div>
           ${item.rating ? `<div class="card-rating"><span class="stars">${stars}</span> ${item.rating}${item.reviews ? ` (${item.reviews})` : ""}</div>` : ""}
+          ${sizeTag}
         </div>
         <div class="card-footer">
-          <a class="shop-btn" href="${esc(item.link)}" target="_blank" rel="noopener">SHOP NOW</a>
+          <a class="shop-btn" href="${esc(item.link)}" target="_blank" rel="noopener">SHOP NOW →</a>
         </div>
       </div>
     `;

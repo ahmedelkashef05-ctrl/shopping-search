@@ -449,6 +449,18 @@ header {
 }
 .stars { color: #f0a500; letter-spacing: -1px; }
 
+.size-badge {
+  display: inline-block;
+  margin-top: 4px;
+  background: #e8f5e9;
+  color: #2e7d32;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  padding: 3px 8px;
+  border-radius: 2px;
+}
+
 .card-footer {
   padding: 10px 14px 14px;
 }
