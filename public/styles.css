@@ -272,7 +272,15 @@ a { text-decoration: none; color: inherit; }
   flex-shrink: 0;
   position: sticky;
   top: 88px;
+  max-height: calc(100vh - 108px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
 }
+.sidebar::-webkit-scrollbar { width: 4px; }
+.sidebar::-webkit-scrollbar-track { background: transparent; }
+.sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 .sidebar-header {
   display: flex;
   justify-content: space-between;
